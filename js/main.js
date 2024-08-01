@@ -1,0 +1,1 @@
+const o=function(o){return"Hello ".concat(o)};console.log(o("world"));
