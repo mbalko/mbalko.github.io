@@ -1,1 +1,512 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Martin Balko - IT služby</title><meta name="description" content="Martin Balko - Kompletní správa IT"><link rel="stylesheet" href="/css/styles.css"><script src="/js/main.js"></script></head><body><h1>Martin Balko - Kompletní správa Vašeho IT</h1><h2>Instalace, automatizace, správa serverů, sítí, i webů</h2><ul><li>Nákup, instalace, servis a správa počítačů, serverů, síťových zařízení, tiskáren, ...<ul><li>Windows, Windows Server, Linux, Synology, ...</li><li>Mikrotik, Cisco, TP-Link, Zyxel, ...</li></ul></li><li>On-site i v cloudu</li><li>Virtualizace, kontejnerizace, VPN, firewall</li><li>Automatizace a optimalizáce IT procesů, skriptování<ul><li>Bash, Python, Batch, Powershell, GitLab CI/CD, ...</li></ul></li><li>Zabezpečení, zálohování, monitorování systémů</li></ul><h3>Výhody spolupráce se mnou</h3><ul><li>Několik let zkušeností v oboru ICT a DevOps</li><li>Individuální a osobní přístup</li><li>Spolupráce na dálku i osobně</li><li>Dostupnost taktéž mimo běžnou pracovní dobu včetně víkendů</li><li>Jednorázová i dlouhodobá spolupráce</li><li>Příznivá cena <u>600Kč/hod</u></li></ul><h3>Kontakt</h3><ul><li>Email:        <a href="mailto:martin@balko.info?subject=IT%C2%A0poptavka">martin@balko.info</a></li><li>Tel. číslo:  <a href="tel:00420735026065">+420 735 026 065</a></li><li>LinkedIn:  <a href="https://www.linkedin.com/in/martin-balko-a36761158">linkedin.com/in/martin-balko-a36761158/</a></li><li>GitHub:    <a href="https://github.com/mbalko">github.com/mbalko</a></li></ul><h4>Odkazy</h4><ul><li><a href="./ssh">SSH klíč</a></li><li><a href="./cv">Životopis</a></li></ul></body></html>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Martin Balko - IT služby</title>
+    <style>
+        :root {
+            --primary: #1f3a4d;
+            --accent: #2d8ba3;
+            --accent-light: #32b8c6;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+            --border: #e0e0e0;
+            --space: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            font-size: 16px;
+        }
+
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem var(--space);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        main {
+            padding: 4rem var(--space) 3rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--white);
+            padding: 0.875rem 2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .cta-button:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(45, 139, 163, 0.3);
+        }
+
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+
+        .service-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(45, 139, 163, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .service-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .service-card ul {
+            list-style: none;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .service-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .service-card li:last-child {
+            border-bottom: none;
+        }
+
+        .service-card li:before {
+            content: "→ ";
+            color: var(--accent);
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .benefits {
+            background: var(--white);
+            padding: 3rem var(--space);
+            border-radius: 8px;
+            margin-bottom: 5rem;
+            border: 1px solid var(--border);
+        }
+
+        .benefits h2 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-size: 1.75rem;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+
+        .benefit-item {
+            text-align: center;
+        }
+
+        .benefit-item strong {
+            display: block;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .benefit-item p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .pricing {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .pricing h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+        }
+
+        .price-tag {
+            font-size: 2.5rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin: 1.5rem 0;
+        }
+
+        .contact-section {
+            background: var(--primary);
+            color: var(--white);
+            padding: 4rem var(--space);
+            border-radius: 8px;
+            margin-bottom: 5rem;
+            text-align: center;
+        }
+
+        .contact-section h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .contact-item h3 {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .contact-item a,
+        .contact-item p {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .contact-item a:hover {
+            opacity: 0.8;
+        }
+
+        .links-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            padding: 3rem var(--space);
+            background: var(--white);
+            border-radius: 8px;
+        }
+
+        .link-box {
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .link-box:hover {
+            border-color: var(--accent);
+            background: rgba(45, 139, 163, 0.05);
+        }
+
+        .link-box a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            display: block;
+            font-size: 0.95rem;
+        }
+
+        .link-box a:hover {
+            color: var(--accent-light);
+        }
+
+        footer {
+            background: var(--primary);
+            color: var(--white);
+            padding: 2rem var(--space);
+            text-align: center;
+            margin-top: 5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                font-size: 0.85rem;
+            }
+
+            .price-tag {
+                font-size: 2rem;
+            }
+
+            .services {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">Martin <span>Balko</span></a>
+            <ul class="nav-links">
+                <li><a href="#services">Služby</a></li>
+                <li><a href="#benefits">Výhody</a></li>
+                <li><a href="#contact">Kontakt</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Kompletní správa Vašeho IT</h1>
+            <p class="tagline">Instalace, automatizace, správa serverů, sítí a webů. Profesionální řešení IT pro váš rostoucí business.</p>
+            <a href="#contact" class="cta-button">Kontaktujte mě</a>
+        </section>
+
+        <section class="services" id="services">
+            <div class="service-card">
+                <h3>Hardware a infrastruktura</h3>
+                <ul>
+                    <li>Nákup, instalace, správa</li>
+                    <li>Servery a síťové zařízení</li>
+                    <li>VPN a firewall</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <h3>Operační systémy</h3>
+                <ul>
+                    <li>Windows Server</li>
+                    <li>Linux</li>
+                    <li>Mikrotik, Cisco</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <h3>Cloud a virtualizace</h3>
+                <ul>
+                    <li>On-site a cloudová řešení</li>
+                    <li>Virtualizace infrastruktury</li>
+                    <li>Kontejnerizace aplikací</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <h3>Automatizace</h3>
+                <ul>
+                    <li>Optimalizace IT procesů</li>
+                    <li>Skriptování</li>
+                    <li>GitLab CI/CD</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <h3>Bezpečnost a monitoring</h3>
+                <ul>
+                    <li>Monitoring a alerting</li>
+                    <li>Zálohování systémů</li>
+                    <li>Zabezpečení dat</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <h3>Webové služby</h3>
+                <ul>
+                    <li>Správa webů a emailů</li>
+                    <li>Konfigurace DNS</li>
+                    <li>SSL certifikáty</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="benefits" id="benefits">
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <strong>Zkušenosti</strong>
+                    <p>Několik let zkušeností v oblasti ICT a DevOps</p>
+                </div>
+                <div class="benefit-item">
+                    <strong>Individuální přístup</strong>
+                    <p>Osobní a flexibilní spolupráce dle Vaší potřeby</p>
+                </div>
+                <div class="benefit-item">
+                    <strong>Dostupnost</strong>
+                    <p>Možnost spolupráce mimo běžnou pracovní dobu</p>
+                </div>
+                <div class="benefit-item">
+                    <strong>Flexibilita</strong>
+                    <p>Jednorázová i dlouhodobá spolupráce</p>
+                </div>
+                <div class="benefit-item">
+                    <strong>On-site nebo Remote</strong>
+                    <p>Možnost spolupráce na dálku i osobně</p>
+                </div>
+                <div class="benefit-item">
+                    <strong>Příznivá cena</strong>
+                    <p>Transparentní sazba bez skrytých poplatků</p>
+                </div>
+            </div>
+
+            <div class="pricing">
+                <h2 style="margin-top: 3rem;">Transparentní sazba</h2>
+                <div class="price-tag">550 Kč/hod</div>
+                <p style="color: var(--text-light);">Profesionální IT řešení za férové ceny</p>
+            </div>
+        </section>
+
+        <section class="contact-section" id="contact">
+            <h2>Kontaktujte mě</h2>
+            <p style="font-size: 1.1rem; opacity: 0.9;">Jsem připraven Vám pomoci s vašim IT</p>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <h3>Email</h3>
+                    <a href="mailto:martin@balko.info">martin@balko.info</a>
+                </div>
+                <div class="contact-item">
+                    <h3>Telefon</h3>
+                    <a href="tel:+420735026065">+420 735 026 065</a>
+                </div>
+                <div class="contact-item">
+                    <h3>WhatsApp</h3>
+                    <a href="tel:+420735026065">+420 735 026 065</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="links-section">
+            <div class="link-box">
+                <a href="./ssh" class="link-box__link">SSH Klíč</a>
+            </div>
+            <div class="link-box">
+                <a href="https://linkedin.com/in/martin-balko-a36761158/" target="_blank">LinkedIn</a>
+            </div>
+            <div class="link-box">
+                <a href="https://github.com/mbalko" target="_blank">GitHub</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Ing. Martin Balko</p>
+    </footer>
+</body>
+</html>
