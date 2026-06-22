@@ -803,18 +803,18 @@ function showEnd() {
   const stats = document.getElementById('end-stats');
   const msg   = document.getElementById('end-msg');
 
+  ttl.textContent  = 'Perfektní sňatek zaručen!';
+
   if (correctCount === 15) {
     lbl.textContent  = '🎉 Neuvěřitelné!';
-    ttl.textContent  = 'Perfektní skóre!';
     msg.textContent  = 'Všech 15 otázek správně — tohle si zaslouží přípitek šampaňským!';
   } else {
     lbl.textContent  = `✅ ${correctCount} z 15`;
-    ttl.textContent  = 'Hra skončila!';
-    msg.textContent  = correctCount >= 10 ? 'Skvělý výsledek, nevěsto!' : 'Příště to bude lepší!';
+    msg.textContent  = correctCount >= 5 ? 'Skvělý výsledek, nevěsto!' : 'Tak snad to vyjde i tak!';
   }
 
   stats.innerHTML = `
-    <div style="display:flex;gap:40px;justify-content:center;margin:20px 0 8px">
+    <div style="display:flex;gap:40px;justify-content:center;margin:20px 0 16px">
       <div style="text-align:center">
         <div style="font-size:2.2rem;font-weight:700;color:var(--ok)">✓ ${correctCount}</div>
         <div style="font-size:.85rem;opacity:.7;margin-top:4px">správně</div>
@@ -823,7 +823,9 @@ function showEnd() {
         <div style="font-size:2.2rem;font-weight:700;color:var(--bad)">✗ ${wrongCount}</div>
         <div style="font-size:.85rem;opacity:.7;margin-top:4px">špatně</div>
       </div>
-    </div>`;
+    </div>
+    <div style="margin:8px 0 4px;font-size:.85rem;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.8">Celkový zisk</div>
+    <div style="font-size:2.6rem;font-weight:900;color:var(--gold2);text-shadow:0 0 24px rgba(245,184,208,.5)">${daysEarned.toLocaleString('cs-CZ')} dní<br>šťastného manželství</div>`;
 }
 
 // ── Lifelines ────────────────────────────────────────────────────
