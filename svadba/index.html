@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kvíz nevěsty</title>
+  <script src="questions.js"></script>
+  <style>
+    :root {
+      --bg:       #140818;
+      --panel:    #21093a;
+      --panel2:   #2e0d4e;
+      --border:   #8c3068;
+      --gold:     #cc789a;
+      --gold2:    #f5b8d0;
+      --white:    #fff5f8;
+      --sel:      #b83068;
+      --ok:       #1a7038;
+      --bad:      #991030;
+      --safe-clr: #b87acc;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: radial-gradient(ellipse 120% 80% at 50% 40%, #4a1060 0%, #140818 70%);
+      min-height: 100vh;
+    }
+    body {
+      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    #zoom-wrap {
+      zoom: 1.4;
+      width: 71.5vw;
+      height: 71.5vh;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse 120% 80% at 50% 40%, #4a1060 0%, #140818 70%);
+    }
+
+    .hidden { display: none !important; }
+
+    /* ── Start screen ─────────────────────────────────────────── */
+    #start-screen {
+      text-align: center;
+      padding: 48px 40px;
+      max-width: 600px;
+      zoom: 0.7;
+    }
+    #intro-text {
+      font-size: clamp(2.2rem, 5.5vw, 4rem);
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #5599ff;
+      text-shadow: 0 0 40px rgba(80,140,255,.55), 0 2px 8px rgba(0,0,0,.9);
+      line-height: 1.25;
+      margin-bottom: 40px;
+      opacity: 0;
+      transition: opacity .6s ease;
+    }
+    #word-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    #word-old {
+      transition: opacity .35s ease;
+    }
+    #word-strike {
+      position: absolute;
+      top: 54%;
+      left: -4px; right: -4px;
+      height: 5px;
+      background: var(--gold2);
+      border-radius: 3px;
+      box-shadow: 0 0 12px rgba(245,184,208,.9), 0 0 28px rgba(245,184,208,.5);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .4s ease;
+    }
+    #word-new {
+      color: var(--gold2);
+      text-shadow: 0 0 40px rgba(245,184,208,.65), 0 2px 6px rgba(0,0,0,.9);
+      opacity: 0;
+      transition: opacity .5s ease;
+    }
+    #start-main {
+      opacity: 0;
+      transition: opacity .7s ease;
+    }
+    .logo {
+      font-size: clamp(4rem, 10vw, 6.2rem);
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--gold2);
+      text-shadow: 0 0 40px rgba(245,184,208,.6), 0 2px 6px rgba(0,0,0,.9);
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .logo-sub {
+      font-size: 1rem;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 36px;
+      opacity: .8;
+    }
+    .start-desc {
+      color: #c9a0c0;
+      font-size: 1.25rem;
+      line-height: 1.7;
+      margin-bottom: 44px;
+    }
+    .btn-gold {
+      display: inline-block;
+      padding: 16px 52px;
+      background: linear-gradient(180deg, #e898bc 0%, #a03068 100%);
+      color: #1a0010;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 24px rgba(180,60,110,.45);
+      transition: transform .12s, box-shadow .12s;
+      font-family: inherit;
+    }
+    .btn-gold:hover  { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(180,60,110,.65); }
+    .btn-gold:active { transform: translateY(0); }
+
+    /* ── Game screen ──────────────────────────────────────────── */
+    #game-screen {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr 210px;
+      padding: 18px 18px 18px 24px;
+      gap: 18px;
+    }
+
+    /* ── Main area ────────────────────────────────────────────── */
+    #main-area {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    /* Lifelines */
+    #lifelines {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      padding-bottom: 4px;
+    }
+    .ll-btn {
+      background: linear-gradient(180deg, var(--panel2) 0%, var(--panel) 100%);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 18px;
+      color: var(--gold2);
+      font-weight: 700;
+      font-size: .82rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s, border-color .2s, opacity .2s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .ll-btn:hover:not(.ll-used) { background: linear-gradient(180deg,#40185a,#2e0d4e); border-color: var(--gold); }
+    .ll-btn.ll-used { opacity: .28; cursor: default; text-decoration: line-through; }
+
+    /* Question info */
+    #q-info {
+      text-align: center;
+      font-size: .78rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: .85;
+    }
+
+    /* Timer */
+    #timer-wrap {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      margin: 0 auto;
+      flex-shrink: 0;
+    }
+    #timer-svg { transform: rotate(-90deg); }
+    #timer-ring {
+      transition: stroke-dashoffset 1s linear, stroke .4s ease;
+    }
+    #timer-num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gold2);
+      transition: color .4s ease;
+    }
+
+    /* Question box */
+    #q-box {
+      background: linear-gradient(180deg, #2e0d48 0%, var(--panel) 100%);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 26px 32px;
+      text-align: center;
+      box-shadow: 0 0 28px rgba(140,48,104,.4), inset 0 1px 0 rgba(255,255,255,.07);
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #q-text { font-size: clamp(.95rem, 1.8vw, 1.2rem); line-height: 1.55; }
+
+    /* Answers */
+    #answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 18px;
+      background: linear-gradient(180deg, #280a40 0%, #1a0630 100%);
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      color: var(--white);
+      font-size: clamp(.8rem, 1.4vw, .95rem);
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: background .15s, border-color .15s, transform .1s;
+      width: 100%;
+    }
+    .ans-btn:hover:not(:disabled):not(.eliminated) {
+      background: linear-gradient(180deg, #3a0e58, #280a44);
+      border-color: #c060a0;
+      transform: translateY(-1px);
+    }
+    .ans-btn:disabled { cursor: default; }
+    .ans-btn.selected {
+      background: linear-gradient(180deg,#c87800,#8a5000) !important;
+      border-color: #ffaa30 !important;
+      animation: pulse-sel .55s ease infinite alternate;
+    }
+    .ans-btn.correct {
+      background: linear-gradient(180deg,#008840,#005828) !important;
+      border-color: #00ee66 !important;
+      animation: none !important;
+    }
+    .ans-btn.wrong {
+      background: linear-gradient(180deg,#cc0000,#880000) !important;
+      border-color: #ff5555 !important;
+      animation: none !important;
+    }
+    .ans-btn.eliminated { opacity: .1; pointer-events: none; }
+
+    @keyframes pulse-sel {
+      from { box-shadow: 0 0  8px rgba(220,80,140,.3); }
+      to   { box-shadow: 0 0 22px rgba(220,80,140,.8); }
+    }
+    .ans-lbl { font-weight: 700; color: var(--gold2); min-width: 20px; flex-shrink: 0; }
+
+
+    /* ── Prize ladder ─────────────────────────────────────────── */
+    #ladder {
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: center;
+      gap: 2px;
+      padding: 4px 0;
+    }
+    .p-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: .72rem;
+      color: #805570;
+      border: 1px solid transparent;
+      transition: all .3s;
+    }
+    .p-row.p-safe    { color: var(--safe-clr); }
+    .p-row.p-won     { color: #e8c0d8; }
+    .p-row.p-current {
+      background: linear-gradient(90deg, #8c2050, #c85080, #8c2050);
+      color: #fff0f5;
+      font-weight: 700;
+      font-size: .78rem;
+      border-color: var(--gold2);
+      box-shadow: 0 0 10px rgba(200,80,128,.55);
+    }
+    .p-num { min-width: 18px; font-weight: 600; }
+    .p-amt { text-align: right; white-space: nowrap; }
+
+    /* ── Modal ────────────────────────────────────────────────── */
+    #modal {
+      position: fixed; inset: 0;
+      background: rgba(16,0,22,.85);
+      display: flex;
+      align-items: center; justify-content: center;
+      z-index: 200;
+      backdrop-filter: blur(5px);
+      animation: fadeIn .2s ease;
+    }
+    #modal-box {
+      background: linear-gradient(180deg, #2e0d48, var(--panel));
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 40px;
+      max-width: 460px;
+      width: 92%;
+      text-align: center;
+    }
+    #modal-box h2 { color: var(--gold2); font-size: 1.35rem; margin-bottom: 18px; }
+    #modal-body  { color: #d0a8c8; font-size: .95rem; line-height: 1.65; }
+
+
+    /* ── End screen ───────────────────────────────────────────── */
+    #end-screen {
+      text-align: center;
+      max-width: 520px;
+      padding: 48px 40px;
+      animation: fadeIn .5s ease;
+    }
+    #end-screen h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 12px; }
+    #end-prize {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 900;
+      color: var(--gold2);
+      text-shadow: 0 0 36px rgba(245,184,208,.65);
+      margin: 18px 0;
+    }
+    #end-msg { color: #cc9ab8; line-height: 1.7; margin-bottom: 36px; font-size: .95rem; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ── Pause button ─────────────────────────────────────────── */
+    #btn-pause {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: none;
+      border: none;
+      color: rgba(245,184,208,.25);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 8px;
+      transition: color .2s, background .2s;
+      z-index: 50;
+      line-height: 1;
+    }
+    #btn-pause:hover { color: rgba(245,184,208,.7); background: rgba(245,184,208,.06); }
+  </style>
+</head>
+<body>
+<div id="zoom-wrap">
+
+<!-- ════════════════ START ════════════════ -->
+<div id="start-screen">
+  <div id="intro-text">Kdo chce být<span id="word-wrap"><span id="word-old">milionářem?</span><span id="word-strike"></span></span><span id="word-new">&#160;nevěstou?</span></div>
+  <div id="start-main">
+    <div class="logo-sub">Poslední svobodný kvíz</div>
+    <p class="start-desc">
+      15 otázek o lásce, svatbách a záhadách manželství.<br>
+      Za každou správnou odpověď získáš dny šťastného manželství — až <strong style="color:var(--gold2)">10 000 dní</strong>!<br>
+      K dispozici máš tři záchranné pomůcky a 60 sekund na každou otázku.
+    </p>
+    <button class="btn-gold" id="btn-start">Začít hru</button>
+  </div>
+</div>
+
+<!-- ════════════════ GAME ════════════════ -->
+<div id="game-screen" class="hidden">
+  <button id="btn-pause" title="Pauza">⏸</button>
+
+  <div id="main-area">
+    <div id="lifelines">
+      <button class="ll-btn" id="ll-fifty"    title="Odstraní dvě špatné odpovědi">50 : 50</button>
+      <button class="ll-btn" id="ll-phone"    title="Telefonát kamarádce">Telefonát</button>
+      <button class="ll-btn" id="ll-audience" title="Hlasování party">Party hlasuje</button>
+    </div>
+
+    <div id="q-info"></div>
+
+    <div id="timer-wrap">
+      <svg id="timer-svg" viewBox="0 0 72 72" width="72" height="72">
+        <circle cx="36" cy="36" r="30" fill="none" stroke="#2e0d48" stroke-width="6"/>
+        <circle id="timer-ring" cx="36" cy="36" r="30" fill="none" stroke="#f5b8d0" stroke-width="6"
+          stroke-dasharray="188.5" stroke-dashoffset="0" stroke-linecap="round"/>
+      </svg>
+      <div id="timer-num">60</div>
+    </div>
+
+    <div id="q-box"><div id="q-text"></div></div>
+
+    <div id="answers">
+      <button class="ans-btn" data-i="0"><span class="ans-lbl">A:</span><span class="ans-txt"></span></button>
+      <button class="ans-btn" data-i="1"><span class="ans-lbl">B:</span><span class="ans-txt"></span></button>
+      <button class="ans-btn" data-i="2"><span class="ans-lbl">C:</span><span class="ans-txt"></span></button>
+      <button class="ans-btn" data-i="3"><span class="ans-lbl">D:</span><span class="ans-txt"></span></button>
+    </div>
+
+  </div>
+
+  <div id="ladder"></div>
+</div>
+
+<!-- ════════════════ MODAL ════════════════ -->
+<div id="modal" class="hidden">
+  <div id="modal-box">
+    <h2 id="modal-title"></h2>
+    <div id="modal-body"></div>
+    <br>
+    <button class="btn-gold" id="btn-modal-close" style="font-size:.85rem;padding:12px 36px">Zavřít</button>
+  </div>
+</div>
+
+<!-- ════════════════ END ════════════════ -->
+<div id="end-screen" class="hidden">
+  <div class="logo-sub" id="end-label" style="margin-bottom:8px"></div>
+  <h1 id="end-title"></h1>
+  <div id="end-stats"></div>
+  <p id="end-msg"></p>
+  <button class="btn-gold" id="btn-restart">Hrát znovu 💍</button>
+</div>
+
+</div><!-- #zoom-wrap -->
+
+<!-- ════════════════ OTÁZKY ════════════════
+     Upravujte tento blok nebo soubor questions.js.
+     Formát: { q, a:[A,B,C,D], correct:0-3, difficulty:1-5 }
+══════════════════════════════════════════════ -->
+<!-- ZÁLOŽNÍ INLINE BLOK — odkomentujte pokud nepoužíváte questions.js
+<script>
+const QUESTIONS_DB = [
+  { q: "Jak se anglicky řekne nevěsta?", a: ["Groom","Bride","Maid","Wife"], correct: 1, difficulty: 1 },
+  { q: "Kolik let trvá zlatá svatba?", a: ["25 let","40 let","50 let","75 let"], correct: 2, difficulty: 1 },
+  { q: "Co se tradičně hází na novomanžele po obřadu?", a: ["Konfety","Rýže","Sůl","Okvětní lístky"], correct: 1, difficulty: 1 },
+  { q: "Jakou barvu mají tradiční nevěstiny šaty?", a: ["Červenou","Zlatou","Bílou","Krémovou"], correct: 2, difficulty: 1 },
+  { q: "Ve kterém měsíci slavíme svátek Valentýn?", a: ["Leden","Únor","Březen","Duben"], correct: 1, difficulty: 1 },
+  { q: "Kolik let trvá stříbrná svatba?", a: ["15 let","20 let","25 let","30 let"], correct: 2, difficulty: 1 },
+  { q: "Ve které ruce nosí Češi snubní prsten?", a: ["Levé","Pravé","V obou","Záleží"], correct: 1, difficulty: 2 },
+  { q: "Jaký drahokam bývá nejčastěji v zásnubním prstenu?", a: ["Rubín","Safír","Diamant","Smaragd"], correct: 2, difficulty: 2 },
+  { q: "Ve které zemi se nosí na svatbě tradiční červené šaty?", a: ["Japonsku","Indii","Číně","Koreji"], correct: 2, difficulty: 2 },
+  { q: "Jak se jmenuje nevěsta z pohádky Kráska a zvíře?", a: ["Aurora","Jasmine","Bella","Ariel"], correct: 2, difficulty: 2 },
+  { q: "V jakém roce se konala svatba prince Williama a Kate Middleton?", a: ["2009","2010","2011","2013"], correct: 2, difficulty: 2 },
+  { q: "Jak se nazývá rituál s henovými vzory na rukou nevěsty?", a: ["Rangoli","Mehndi","Puja","Bindi"], correct: 1, difficulty: 2 },
+  { q: "Jak se nazývá česká tradice, při níž hosté ukradnou nevěstě střevíček?", a: ["Výkup nevěsty","Krádež střevíčku","Hledání nevěsty","Ztráta střevíčku"], correct: 1, difficulty: 3 },
+  { q: "Ve které opeře hraje slavný Svadobný pochod Here Comes the Bride?", a: ["Traviata","Lohengrin","Carmen","Rigoletto"], correct: 1, difficulty: 3 },
+  { q: "Ve které komedii z roku 2011 řeší šest kamarádek přípravy na svatbu?", a: ["Nevěsta na útěku","Nevěsty v tísni","27 šatů","Moje velká řecká svatba"], correct: 1, difficulty: 3 },
+  { q: "Kolik let trvá diamantová svatba?", a: ["50 let","55 let","60 let","65 let"], correct: 2, difficulty: 3 },
+  { q: "Ve které době se staly bílé svatební šaty módní díky královně Viktorii?", a: ["17. století","18. století","19. století","20. století"], correct: 2, difficulty: 3 },
+  { q: "Jak se nazývá irský zásnubní prsten s motivem rukou, srdce a koruny?", a: ["Shamrock","Celtic","Claddagh","Erin"], correct: 2, difficulty: 3 },
+  { q: "Jak se latinsky nazývá žíla vedoucí od prsteníčku k srdci?", a: ["Vena cordis","Vena amoris","Vena vitae","Linea amoris"], correct: 1, difficulty: 4 },
+  { q: "Ve které Verdiho opeře zpívá slavnou árii La donna è mobile?", a: ["Traviata","Aida","Nabucco","Rigoletto"], correct: 3, difficulty: 4 },
+  { q: "Jak se nazývá japonský rituál, při němž novomanželé třikrát pijí ze tří pohárů saké?", a: ["Omiki","San-san-kudo","Tokkuri","Kagami biraki"], correct: 1, difficulty: 4 },
+  { q: "Kolik let manželství symbolizuje rubínová výzdoba?", a: ["30 let","35 let","40 let","45 let"], correct: 2, difficulty: 4 },
+  { q: "V jakém roce zavedla Česká republika registrované partnerství?", a: ["2000","2004","2006","2009"], correct: 2, difficulty: 4 },
+  { q: "Jak se nazývá skotský zvyk, kdy ženicha nebo nevěstu před svatbou polévají různými věcmi?", a: ["Tarring","Blackening","Haggising","Briding"], correct: 1, difficulty: 4 },
+  { q: "Jak se jmenuje slavná nevěsta z románu Charlese Dickense, která zastavila hodiny v 9:20?", a: ["Lady Dashwood","Miss Havisham","Mrs. Rochester","Miss Higgins"], correct: 1, difficulty: 5 },
+  { q: "Kde byl nalezen nejstarší zásnubní prsten na světě, starý přibližně 4 800 let?", a: ["Mezopotámii","Egyptě","Řecku","Indii"], correct: 1, difficulty: 5 },
+  { q: "Jak se jmenuje bohyně manželství ve starořecké mytologii?", a: ["Afrodita","Artemis","Héra","Athéna"], correct: 2, difficulty: 5 },
+  { q: "Jak se nazývá henna obřad v arabské kultuře konaný večer před svatbou?", a: ["Hafla","Mahr","Laylat Al-Henna","Nikah"], correct: 2, difficulty: 5 },
+  { q: "Jak se nazývá mexická oslava 15. narozenin dívky symbolizující přechod do dospělosti?", a: ["Fiesta grande","Quinceañera","Boda de niña","Paseo"], correct: 1, difficulty: 5 },
+  { q: "Ve které opeře Richarda Wagnera zazněl Svadobný pochod poprvé na jevišti?", a: ["Parsifal","Lohengrin","Tristan a Isolda","Prsten Nibelungův"], correct: 1, difficulty: 5 }
+];
+</script> -->
+
+<!-- ════════════════ HRA ════════════════ -->
+<script>
+// ── Konstanty ──────────────────────────────────────────────────
+const PRIZES = [
+  1, 2, 3, 5, 10,
+  20, 40, 80, 160, 320,
+  640, 1_250, 2_500, 5_000, 10_000
+];
+const LABELS   = ['A','B','C','D'];
+
+// ── Audio engine (Web Audio API) ───────────────────────────────
+const Snd = (() => {
+  const s = {
+    theme:   new Audio('sounds/theme.mp3'),
+    theme2:  new Audio('sounds/theme2.mp3'),
+    theme3:  new Audio('sounds/theme3.mp3'),
+    answer:  new Audio('sounds/answer.mp3'),
+    ok:      new Audio('sounds/correct.mp3'),
+    bad:     new Audio('sounds/wrong.mp3'),
+    modal:   new Audio('sounds/modal.mp3'),
+    start:   new Audio('sounds/start.mp3'),
+    welcome: new Audio('sounds/welcome.mp3'),
+  };
+  [s.theme, s.theme2, s.theme3].forEach(t => { t.loop = true; t.volume = 0.45; });
+
+  let themeActive = false;
+  let currentTheme = s.theme;
+  const oneshots = [s.answer, s.ok, s.bad, s.modal];
+
+  function themeForIdx(idx) {
+    return idx < 5 ? s.theme : idx < 10 ? s.theme2 : s.theme3;
+  }
+
+  function play(a) {
+    currentTheme.pause();
+    oneshots.forEach(o => { if (o !== a) { o.pause(); o.currentTime = 0; } });
+    a.currentTime = 0;
+    a.play().catch(() => {});
+    a.onended = () => { if (themeActive) currentTheme.play().catch(() => {}); };
+  }
+
+  return {
+    click()        { play(s.modal); },
+    select()       { play(s.answer); },
+    correct()      { play(s.ok); },
+    wrong()        { play(s.bad); },
+    levelUp()      {},
+    win()          { play(s.ok); },
+    startTick()    {},
+    stopTick()     {},
+    playStart()    { play(s.start); },
+    playWelcome()  { s.welcome.loop = true; s.welcome.currentTime = 0; s.welcome.play().catch(() => {}); },
+    stopWelcome()  { s.welcome.pause(); s.welcome.currentTime = 0; },
+    stopOneshots() { oneshots.forEach(o => { o.pause(); o.currentTime = 0; }); if (themeActive) currentTheme.play().catch(() => {}); },
+    startDrone(idx = 0) {
+      themeActive = true;
+      currentTheme = themeForIdx(idx);
+      currentTheme.currentTime = 0;
+      currentTheme.play().catch(() => {});
+    },
+    switchDrone(idx) {
+      const next = themeForIdx(idx);
+      if (next === currentTheme) return;
+      currentTheme.pause(); currentTheme.currentTime = 0;
+      currentTheme = next;
+      if (themeActive) { currentTheme.currentTime = 0; currentTheme.play().catch(() => {}); }
+    },
+    stopDrone() {
+      themeActive = false;
+      currentTheme.pause(); currentTheme.currentTime = 0;
+    },
+  };
+})();
+
+// ── State ───────────────────────────────────────────────────────
+let gameQ = [], qIdx = 0, phase = 'idle';
+let ll = { fifty: false, phone: false, audience: false };
+let eliminated = [];
+let correctCount = 0, wrongCount = 0;
+let daysEarned = 0, daysLost = 0;
+
+// ── Helpers ─────────────────────────────────────────────────────
+const fmt = n => n.toLocaleString('cs-CZ') + ' dní';
+const delay = ms => new Promise(r => setTimeout(r, ms));
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function selectQuestions() {
+  const g = {};
+  for (let d = 1; d <= 5; d++) g[d] = shuffle(QUESTIONS_DB.filter(q => q.difficulty === d));
+  return [1,2,3,4,5].flatMap(d => g[d].slice(0,3));
+}
+
+// ── DOM ─────────────────────────────────────────────────────────
+const $start   = document.getElementById('start-screen');
+const $game    = document.getElementById('game-screen');
+const $end     = document.getElementById('end-screen');
+const $modal   = document.getElementById('modal');
+const $qInfo   = document.getElementById('q-info');
+const $qText   = document.getElementById('q-text');
+const $ladder  = document.getElementById('ladder');
+const $ansBtns = [...document.querySelectorAll('.ans-btn')];
+const $llFifty    = document.getElementById('ll-fifty');
+const $llPhone    = document.getElementById('ll-phone');
+const $llAud      = document.getElementById('ll-audience');
+const $timerRing  = document.getElementById('timer-ring');
+const $timerNum   = document.getElementById('timer-num');
+
+// ── Timer ────────────────────────────────────────────────────────
+const TIMER_TOTAL = 60;
+const CIRC        = 2 * Math.PI * 30; // r=30 → ≈188.5
+
+let timerInterval = null;
+let timeLeft      = TIMER_TOTAL;
+
+function updateTimerDisplay() {
+  const pct    = timeLeft / TIMER_TOTAL;
+  const offset = CIRC * (1 - pct);
+  $timerRing.style.strokeDashoffset = offset;
+  const col = timeLeft <= 5 ? '#dd1111' : timeLeft <= 10 ? '#e87060' : '#f5b8d0';
+  $timerRing.style.stroke = col;
+  $timerNum.style.color   = col;
+  $timerNum.textContent   = timeLeft;
+}
+
+function startTimer() {
+  stopTimer();
+  timeLeft = TIMER_TOTAL;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) { stopTimer(); timeUp(); }
+  }, 1000);
+}
+
+function pauseTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function resumeTimer() {
+  if (phase === 'question' && timeLeft > 0 && !timerInterval) {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimerDisplay();
+      if (timeLeft <= 0) { stopTimer(); timeUp(); }
+    }, 1000);
+  }
+}
+
+function stopTimer() {
+  pauseTimer();
+}
+
+async function timeUp() {
+  if (phase !== 'question') return;
+  phase = 'selected';
+  stopTimer();
+  wrongCount++; daysLost += PRIZES[qIdx];
+  Snd.stopTick();
+  Snd.wrong();
+  $ansBtns.forEach(b => b.disabled = true);
+  setLifelinesDisabled(true);
+  await delay(600);
+  phase = 'reveal';
+  $ansBtns[gameQ[qIdx].correct].classList.add('correct');
+  await delay(3000);
+  if (qIdx === 14) {
+    Snd.stopDrone();
+    await delay(400);
+    showEnd();
+  } else {
+    const checkpoint = qIdx === 4 || qIdx === 9;
+    const milestoneNum = qIdx + 1;
+    qIdx++;
+    setLifelinesDisabled(false);
+    if (checkpoint) {
+      await showMilestoneModal(milestoneNum);
+    } else {
+      await delay(3000);
+    }
+    showQuestion();
+  }
+}
+
+// ── Prize ladder ────────────────────────────────────────────────
+function buildLadder() {
+  $ladder.innerHTML = '';
+  for (let i = 0; i < 15; i++) {
+    const row = document.createElement('div');
+    row.id = `pr-${i}`;
+    row.className = 'p-row';
+    row.innerHTML = `<span class="p-num">${i+1}</span><span class="p-amt">${fmt(PRIZES[i])}</span>`;
+    $ladder.appendChild(row);
+  }
+}
+
+function updateLadder() {
+  for (let i = 0; i < 15; i++) {
+    const row = document.getElementById(`pr-${i}`);
+    row.className = 'p-row';
+    if (i === qIdx)    row.classList.add('p-current');
+    else if (i < qIdx) row.classList.add('p-won');
+  }
+}
+
+// ── Game flow ───────────────────────────────────────────────────
+function startGame() {
+  gameQ = selectQuestions();
+  qIdx = 0; phase = 'question';
+  ll = { fifty:false, phone:false, audience:false };
+  eliminated = [];
+  correctCount = 0; wrongCount = 0;
+  daysEarned = 0; daysLost = 0;
+  gamePaused = false; $btnPause.textContent = '⏸'; $btnPause.style.color = '';
+
+  $start.classList.add('hidden');
+  $end.classList.add('hidden');
+  $game.classList.remove('hidden');
+  [$llFifty,$llPhone,$llAud].forEach(b => b.classList.remove('ll-used'));
+
+  buildLadder();
+  Snd.startDrone();
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = gameQ[qIdx];
+  eliminated = []; phase = 'question';
+  Snd.stopOneshots();
+  Snd.switchDrone(qIdx);
+
+  $qInfo.textContent = `Otázka ${qIdx+1} za ${fmt(PRIZES[qIdx])}`;
+  $qText.textContent = q.q;
+
+  $ansBtns.forEach((btn, i) => {
+    btn.className = 'ans-btn';
+    btn.disabled = false;
+    btn.querySelector('.ans-txt').textContent = q.a[i];
+  });
+
+  updateLadder();
+  Snd.startTick(qIdx >= 10);
+  startTimer();
+}
+
+async function pickAnswer(selIdx) {
+  if (phase !== 'question') return;
+  phase = 'selected';
+  stopTimer();
+  Snd.stopTick();
+  Snd.select();
+
+  $ansBtns.forEach(b => b.disabled = true);
+  setLifelinesDisabled(true);
+  $ansBtns[selIdx].classList.add('selected');
+
+  await delay(5000);
+
+  phase = 'reveal';
+  const correct = gameQ[qIdx].correct;
+  const isRight = selIdx === correct;
+
+  $ansBtns[selIdx].classList.remove('selected');
+
+  if (isRight) {
+    correctCount++; daysEarned += PRIZES[qIdx];
+    Snd.correct();
+    $ansBtns[selIdx].classList.add('correct');
+  } else {
+    wrongCount++; daysLost += PRIZES[qIdx];
+    Snd.wrong();
+    $ansBtns[selIdx].classList.add('wrong');
+    await delay(600);
+    $ansBtns[correct].classList.add('correct');
+  }
+
+  await delay(3000);
+
+  if (qIdx === 14) {
+    Snd.stopDrone(); if (isRight) Snd.win();
+    await delay(600);
+    showEnd();
+  } else {
+    Snd.levelUp();
+    const checkpoint = qIdx === 4 || qIdx === 9;
+    const milestoneNum = qIdx + 1;
+    qIdx++;
+    setLifelinesDisabled(false);
+    if (checkpoint) {
+      await showMilestoneModal(milestoneNum);
+    } else {
+      await delay(3000);
+    }
+    showQuestion();
+  }
+}
+
+function showEnd() {
+  phase = 'ended';
+  $game.classList.add('hidden');
+  $end.classList.remove('hidden');
+
+  const lbl   = document.getElementById('end-label');
+  const ttl   = document.getElementById('end-title');
+  const stats = document.getElementById('end-stats');
+  const msg   = document.getElementById('end-msg');
+
+  if (correctCount === 15) {
+    lbl.textContent  = '🎉 Neuvěřitelné!';
+    ttl.textContent  = 'Perfektní skóre!';
+    msg.textContent  = 'Všech 15 otázek správně — tohle si zaslouží přípitek šampaňským!';
+  } else {
+    lbl.textContent  = `✅ ${correctCount} z 15`;
+    ttl.textContent  = 'Hra skončila!';
+    msg.textContent  = correctCount >= 10 ? 'Skvělý výsledek, nevěsto!' : 'Příště to bude lepší!';
+  }
+
+  stats.innerHTML = `
+    <div style="display:flex;gap:40px;justify-content:center;margin:20px 0 8px">
+      <div style="text-align:center">
+        <div style="font-size:2.2rem;font-weight:700;color:var(--ok)">✓ ${correctCount}</div>
+        <div style="font-size:.85rem;opacity:.7;margin-top:4px">správně</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:2.2rem;font-weight:700;color:var(--bad)">✗ ${wrongCount}</div>
+        <div style="font-size:.85rem;opacity:.7;margin-top:4px">špatně</div>
+      </div>
+    </div>`;
+}
+
+// ── Lifelines ────────────────────────────────────────────────────
+function setLifelinesDisabled(off) {
+  [$llFifty,$llPhone,$llAud].forEach(b => {
+    if (!b.classList.contains('ll-used')) b.disabled = off;
+  });
+}
+
+function use5050() {
+  if (ll.fifty || phase !== 'question') return;
+  ll.fifty = true; $llFifty.classList.add('ll-used');
+  const correct = gameQ[qIdx].correct;
+  const toRemove = shuffle([0,1,2,3].filter(i => i !== correct)).slice(0,2);
+  eliminated = toRemove;
+  toRemove.forEach(i => $ansBtns[i].classList.add('eliminated'));
+}
+
+function usePhone() {
+  if (ll.phone || phase !== 'question') return;
+  ll.phone = true; $llPhone.classList.add('ll-used'); Snd.click();
+
+  const avail = [0,1,2,3]
+    .filter(i => !eliminated.includes(i))
+    .map(i => `<span style="color:var(--gold2);font-weight:700">${LABELS[i]}:</span> ${gameQ[qIdx].a[i]}`)
+    .join('<br>');
+
+  showModal('📞 Telefonát kamarádce',
+    `<p style="font-size:1.05rem;margin-bottom:16px">Vyber si jednu přítomnou slečnu a prodiskutuj s ní odpověď! 💕</p>
+     <p style="color:var(--gold);margin-bottom:18px;font-size:.9rem;letter-spacing:1px;text-transform:uppercase">Možné odpovědi</p>
+     <div style="line-height:2;margin-bottom:20px">${avail}</div>
+     <p style="color:#aa7898;font-size:.85rem">Odpočet je zastaven — až budete mít jasno, klikněte na Pokračovat.</p>`
+  );
+  document.getElementById('btn-modal-close').textContent = 'Pokračovat';
+}
+
+function useAudience() {
+  if (ll.audience || phase !== 'question') return;
+  ll.audience = true; $llAud.classList.add('ll-used'); Snd.click();
+
+  const avail = [0,1,2,3]
+    .filter(i => !eliminated.includes(i))
+    .map(i => `<span style="color:var(--gold2);font-weight:700">${LABELS[i]}:</span> ${gameQ[qIdx].a[i]}`)
+    .join('<br>');
+
+  showModal('👯 Party hlasuje',
+    `<p style="font-size:1.05rem;margin-bottom:16px">Čas poradit se s partou! 🥂</p>
+     <p style="color:var(--gold);margin-bottom:18px;font-size:.9rem;letter-spacing:1px;text-transform:uppercase">Možné odpovědi</p>
+     <div style="line-height:2;margin-bottom:20px">${avail}</div>
+     <p style="color:#aa7898;font-size:.85rem">Prodiskutujte odpověď — odpočet je zastaven.<br>Až budete mít jasno, klikněte na Pokračovat.</p>`
+  );
+  document.getElementById('btn-modal-close').textContent = 'Pokračovat';
+}
+
+// ── Modal ────────────────────────────────────────────────────────
+function showModal(title, bodyHTML) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML    = bodyHTML;
+  document.getElementById('btn-modal-close').textContent = 'Zavřít';
+  $modal.classList.remove('hidden');
+  pauseTimer();
+  Snd.stopTick();
+}
+
+function showMilestoneModal(num) {
+  showModal(`🎯 Přestávka po ${num}. otázce`,
+    `<div style="display:grid;gap:14px;text-align:left;margin-bottom:8px">
+       <div style="display:flex;justify-content:space-between;align-items:center">
+         <span>✓ <strong>${correctCount}</strong> správně</span>
+         <span style="color:var(--ok);font-weight:700">+${daysEarned.toLocaleString('cs-CZ')} dní</span>
+       </div>
+       <div style="display:flex;justify-content:space-between;align-items:center">
+         <span>✗ <strong>${wrongCount}</strong> špatně</span>
+         <span style="color:var(--bad);font-weight:700">${daysLost.toLocaleString('cs-CZ')} dní</span>
+       </div>
+       <hr style="border:none;border-top:1px solid var(--border);margin:2px 0">
+       <div style="display:flex;justify-content:space-between;align-items:center;font-size:1.1rem">
+         <span style="font-weight:700">Celkem</span>
+         <span style="color:var(--gold2);font-weight:700">+${daysEarned.toLocaleString('cs-CZ')} dní</span>
+       </div>
+     </div>`
+  );
+  document.getElementById('btn-modal-close').textContent = 'Pokračovat';
+  return new Promise(resolve =>
+    document.getElementById('btn-modal-close').addEventListener('click', resolve, { once: true })
+  );
+}
+
+// ── Events ───────────────────────────────────────────────────────
+document.getElementById('btn-start').addEventListener('click', () => { Snd.stopWelcome(); Snd.playStart(); startGame(); });
+document.getElementById('btn-restart').addEventListener('click', startGame);
+document.getElementById('btn-modal-close').addEventListener('click', () => {
+  $modal.classList.add('hidden');
+  Snd.stopOneshots();
+  resumeTimer();
+});
+$llFifty.addEventListener('click', use5050);
+$llPhone.addEventListener('click', usePhone);
+$llAud.addEventListener('click', useAudience);
+$ansBtns.forEach(btn => btn.addEventListener('click', () => pickAnswer(+btn.dataset.i)));
+
+const $btnPause = document.getElementById('btn-pause');
+let gamePaused = false;
+$btnPause.addEventListener('click', () => {
+  if (phase !== 'question') return;
+  if (!gamePaused) {
+    gamePaused = true;
+    pauseTimer();
+    Snd.stopOneshots();
+    Snd.stopDrone();
+    $btnPause.textContent = '▶';
+    $btnPause.style.color = 'rgba(245,184,208,.6)';
+  } else {
+    gamePaused = false;
+    resumeTimer();
+    Snd.startDrone();
+    $btnPause.textContent = '⏸';
+    $btnPause.style.color = '';
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (phase !== 'question') return;
+  const map = { a:0, b:1, c:2, d:3, '1':0, '2':1, '3':2, '4':3 };
+  const i = map[e.key.toLowerCase()];
+  if (i !== undefined && !$ansBtns[i].classList.contains('eliminated') && !$ansBtns[i].disabled)
+    pickAnswer(i);
+});
+
+(async function runIntro() {
+  const $introText  = document.getElementById('intro-text');
+  const $wordOld    = document.getElementById('word-old');
+  const $wordStrike = document.getElementById('word-strike');
+  const $wordNew    = document.getElementById('word-new');
+  const $startMain  = document.getElementById('start-main');
+
+  Snd.playWelcome();
+  await delay(400);
+  $introText.style.opacity = '1';
+  await delay(1500);
+  $wordStrike.style.transform = 'scaleX(1)';
+  await delay(500);
+  $wordOld.style.opacity = '0.2';
+  await delay(200);
+  $wordNew.style.opacity = '1';
+  await delay(900);
+  $startMain.style.opacity = '1';
+})();
+</script>
+
+</body>
+</html>
