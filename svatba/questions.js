@@ -37,25 +37,25 @@ const QUESTIONS_DB = [
     "difficulty": 1
   },
   {
-    "q": "Co NESMÍ do mikrovlnky?",
+    "q": "Co symbolizuje tradice, kdy slovenská nevěsta hází za sebe hrst ovsa?",
     "a": [
-      "Alobalová krabička",
-      "Porcelánový talíř",
-      "Skleněná mísa",
-      "Ženichovy ponožky"
+      "Hojnost a plodnost rodiny",
+      "Krmení ptáků — přivolání štěstí",
+      "Rozloučení s dívčím životem",
+      "Aby se za ní nikdo nehonil"
     ],
     "correct": 0,
     "difficulty": 1
   },
   {
-    "q": "Co je \"helikoptérový rodič\"?",
+    "q": "Kdo tradičně vedl nevěstu k oltáři v české tradici?",
     "a": [
-      "Rodič, který neustále krouží a kontroluje",
-      "Rodič, který dítě vozí všude autem",
-      "Rodič, který dítě učí létat",
-      "Rodič, který pracuje u letectva"
+      "Otec nevěsty",
+      "Oba rodiče nevěsty společně",
+      "Starejší nebo družba",
+      "Nevěsta šla sama"
     ],
-    "correct": 0,
+    "correct": 2,
     "difficulty": 1
   },
   {
@@ -81,25 +81,25 @@ const QUESTIONS_DB = [
     "difficulty": 2
   },
   {
-    "q": "Proč v Rusku nikdy nedáváš sudý počet květin?",
+    "q": "Co je princip \"2-2-2\" v manželství?",
     "a": [
-      "Sudý počet patří mrtvým — na pohřby",
-      "Sudý je neslušný",
-      "Přináší smůlu",
-      "Lichý je symbol lásky"
+      "2 děti, 2 auta, 2 domácí mazlíčky ",
+      "Každé 2 týdny rande, každé 2 měsíce víkend ve dvou, každých 2 roky společná dovolená bez dětí",
+      "2 hodiny volna denně pro každého plus dvě hodiny spolu",
+      "3 komplimenty denně"
     ],
-    "correct": 0,
+    "correct": 1,
     "difficulty": 2
   },
   {
-    "q": "Co se stane, když přesolíš polévku? (Babiččin trik)",
+    "q": "Přesolíš polévku. Co funguje jako babiččin trik?",
     "a": [
       "Přidáš syrovou bramboru — nasaje sůl",
       "Přidáš cukr — vyváží chuť",
-      "Přileješ vodu",
-      "A funguje, B je mýtus"
+      "Přidáš mléko — neutralizuje sůl",
+      "Přidáš vejce — váže minerály"
     ],
-    "correct": 3,
+    "correct": 0,
     "difficulty": 2
   },
   {
@@ -114,12 +114,23 @@ const QUESTIONS_DB = [
     "difficulty": 2
   },
   {
-    "q": "Jaký hormon se uvolňuje při orgasmu — \"hormon lásky\"?",
+    "q": "Co je nejčastější sexuální fantazie mužů v dlouhodobém vztahu?",
     "a": [
-      "Adrenalin",
-      "Oxytocin",
-      "Serotonin",
-      "Testosteron"
+      "Sex se slavnou osobou",
+      "Trojka",
+      "Sex s vlastní partnerkou v novém prostředí",
+      "Dominance"
+    ],
+    "correct": 2,
+    "difficulty": 2
+  },
+  {
+    "q": "Co je \"Kama Sutra\" ve skutečnosti?",
+    "a": [
+      "Sbírka sexuálních pozic",
+      "Starověký indický text o umění života, lásce, manželství a sexualitě — pozice tvoří jen malou část",
+      "Náboženský hinduistický text",
+      "Příručka pro chrámové tanečnice"
     ],
     "correct": 1,
     "difficulty": 2
@@ -202,14 +213,14 @@ const QUESTIONS_DB = [
     "difficulty": 4
   },
   {
-    "q": "Jaký je rozdíl mezi SJM a předmanželskou smlouvou?",
+    "q": "Kolik procent párů přiznává, že sledují porno společně?",
     "a": [
-      "SJM je automatické, smlouva ho mění",
-      "SJM je dobrovolné",
-      "Smlouva ruší SJM úplně",
-      "Totéž, jiný název"
+      "Asi 5 %",
+      "Asi 15 %",
+      "Asi 25–30 %",
+      "Asi 60 %"
     ],
-    "correct": 0,
+    "correct": 2,
     "difficulty": 4
   },
   {
@@ -224,14 +235,14 @@ const QUESTIONS_DB = [
     "difficulty": 4
   },
   {
-    "q": "Jak dlouho trvá průměrný ženský orgasmus?",
+    "q": "Jaký je statisticky nejlepší den v týdnu pro sex podle průzkumů?",
     "a": [
-      "5–8 sekund",
-      "10–20 sekund",
-      "20–35 sekund",
-      "Záleží na partnerovi"
+      "Pátek večer",
+      "Sobota ráno",
+      "Neděle ráno",
+      "Středa večer"
     ],
-    "correct": 2,
+    "correct": 1,
     "difficulty": 4
   },
   {
